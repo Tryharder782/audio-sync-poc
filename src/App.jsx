@@ -319,9 +319,27 @@ function App() {
         const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         recordingBlobRef.current = blob;
         const arrayBuffer = await blob.arrayBuffer();
-        const audioBuffer = await audioCtxRef.current.decodeAudioData(arrayBuffer);
-        setRecordingBuffer(audioBuffer);
-        log('Recording captured.');
+        const rawBuffer = await audioCtxRef.current.decodeAudioData(arrayBuffer);
+
+        // Force Mono Mixdown if 2 channels
+        // Sometimes raw constraint isn't enough, we must manually mix
+        let finalBuffer = rawBuffer;
+        if (rawBuffer.numberOfChannels > 1) {
+          const ctx = audioCtxRef.current;
+          const monoBuffer = ctx.createBuffer(1, rawBuffer.length, rawBuffer.sampleRate);
+          const inputL = rawBuffer.getChannelData(0);
+          const inputR = rawBuffer.getChannelData(1);
+          const output = monoBuffer.getChannelData(0);
+
+          for (let i = 0; i < rawBuffer.length; i++) {
+            // Simple average mix
+            output[i] = (inputL[i] + inputR[i]) / 2;
+          }
+          finalBuffer = monoBuffer;
+        }
+
+        setRecordingBuffer(finalBuffer);
+        log(`Captured. Channels: ${rawBuffer.numberOfChannels} -> ${finalBuffer.numberOfChannels}`);
       };
 
       const ctx = audioCtxRef.current;
@@ -504,6 +522,17 @@ function App() {
 
       <div className="debug">
         {debugLog.map((l, i) => <div key={i}>{l}</div>)}
+      </div>
+
+      <div style={{
+        position: 'fixed',
+        bottom: '10px',
+        right: '10px',
+        color: '#666',
+        fontSize: '0.8rem',
+        pointerEvents: 'none'
+      }}>
+        v1.2 (Mono Mix + NoFilters)
       </div>
     </div>
   );
