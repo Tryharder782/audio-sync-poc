@@ -53,6 +53,14 @@ This project solves the common issue of recording latency by calculating the pre
     -   Click "4. Play Synced Result".
     -   adjust the **Latency Slider** if needed.
     -   Check the **Waveform** to see if your peaks align with the white vertical lines.
+    
+## Troubleshooting
+
+### Audio Fading or Gating
+If your recording sounds like it's fading in/out or muting, your browser might be aggressively applying **Echo Cancellation**.
+-   **Brave Browser**: "Shields" or built-in ad-blockers can interfere with raw audio capture. Try disabling Shields for the site.
+-   **Ad-Blockers**: Some extensions force privacy protections that disrupt `getUserMedia` constraints. Disable them for this PoC.
+-   **Windows**: Check "Sound Settings" -> "Device Properties" and disable "Audio Enhancements".
 
 ## Author
 
