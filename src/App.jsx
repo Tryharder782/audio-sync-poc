@@ -305,7 +305,8 @@ function App() {
           echoCancellation: false,
           autoGainControl: false,
           noiseSuppression: false,
-          latency: 0
+          latency: 0,
+          channelCount: 1
         }
       });
       const mediaRecorder = new MediaRecorder(stream);
