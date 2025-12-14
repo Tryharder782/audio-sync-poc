@@ -227,6 +227,7 @@ function App() {
   const [manualOffset, setManualOffset] = useState(-80); // Default -80ms
   const [debugLog, setDebugLog] = useState([]);
   const [recordingBuffer, setRecordingBuffer] = useState(null);
+  const [showAdBlockWarning, setShowAdBlockWarning] = useState(true);
 
   // Audio Refs
   const audioCtxRef = useRef(null);
@@ -455,6 +456,38 @@ function App() {
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'system-ui', maxWidth: '800px', margin: '0 auto' }}>
+
+      {showAdBlockWarning && (
+        <div style={{
+          backgroundColor: '#ffa500', // Orange
+          color: '#000',
+          padding: '10px',
+          borderRadius: '8px',
+          marginBottom: '20px',
+          textAlign: 'center',
+          fontWeight: 'bold',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <span>⚠ Please disable Ad Blockers / Brave Shields. They may mute the microphone!</span>
+          <button
+            onClick={() => setShowAdBlockWarning(false)}
+            style={{
+              background: 'rgba(0,0,0,0.2)',
+              border: 'none',
+              color: '#000',
+              width: 'auto',
+              padding: '5px 10px',
+              marginLeft: '15px',
+              cursor: 'pointer'
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       <h1>Audio Sync PoC</h1>
 
       <div className="card">
