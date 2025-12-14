@@ -309,6 +309,18 @@ function App() {
           latency: 0
         }
       });
+
+      // DIAGNOSTIC LOGGING
+      const track = stream.getAudioTracks()[0];
+      if (track) {
+        const settings = track.getSettings();
+        log(`Active Settings: ${JSON.stringify({
+          echoCancellation: settings.echoCancellation,
+          autoGainControl: settings.autoGainControl,
+          noiseSuppression: settings.noiseSuppression,
+          channelCount: settings.channelCount
+        })}`);
+      }
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
