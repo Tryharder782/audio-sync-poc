@@ -302,11 +302,11 @@ function App() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency: 0,
-          channelCount: 1
+          channelCount: 1,
+          echoCancellation: { ideal: false },
+          autoGainControl: { ideal: false },
+          noiseSuppression: { ideal: false },
+          latency: 0
         }
       });
       const mediaRecorder = new MediaRecorder(stream);
@@ -316,6 +316,9 @@ function App() {
       mediaRecorder.ondataavailable = e => audioChunksRef.current.push(e.data);
 
       mediaRecorder.onstop = async () => {
+        // Stop all tracks to release microphone fully
+        stream.getTracks().forEach(track => track.stop());
+
         const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         recordingBlobRef.current = blob;
         const arrayBuffer = await blob.arrayBuffer();
@@ -532,7 +535,7 @@ function App() {
         fontSize: '0.8rem',
         pointerEvents: 'none'
       }}>
-        v1.2 (Mono Mix + NoFilters)
+        v1.3 (Ideal Constraints + Track Cleanup)
       </div>
     </div>
   );
